@@ -12,6 +12,9 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- 编译时的编码 -->
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+
+		<jknife.ezmvc_version>1.1.6</jknife.ezmvc_version>
+		<spring.version>4.3.12.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
@@ -134,7 +137,42 @@
 			<artifactId>aliyun-sdk-oss</artifactId>
 			<version>2.0.6</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>jknife</groupId>
+			<artifactId>jknife-ezmvc</artifactId>
+			<version>${jknife.ezmvc_version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- 爬虫需要的jar -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.11.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.46</version>
+		</dependency>
+
+		<!-- quartz定时任务-->
+		<dependency>
+			<groupId>cn.dreampie</groupId>
+			<artifactId>jfinal-quartz</artifactId>
+			<version>0.2</version>
+		</dependency>
 		<!-- 数据库 -->
 		<dependency>
 			<groupId>mysql</groupId>

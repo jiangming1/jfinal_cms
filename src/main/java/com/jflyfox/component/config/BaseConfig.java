@@ -16,6 +16,12 @@
  */
 package com.jflyfox.component.config;
 
+import cn.dreampie.quartz.QuartzKey;
+import cn.dreampie.quartz.QuartzPlugin;
+import cn.dreampie.quartz.job.QuartzCronJob;
+import com.jflyfox.util.task.job.QuartzPY;
+import com.jflyfox.util.task.job.SpiderJob;
+import jknife.ezmvc.plugin.spring.SpringKit;
 import org.beetl.core.GroupTemplate;
 import org.beetl.ext.jfinal3.JFinal3BeetlRenderFactory;
 
@@ -153,8 +159,15 @@ public class BaseConfig extends JFinalConfig {
 			arp.setDialect(new OracleDialect());
 			arp.setContainerFactory(new CaseInsensitiveContainerFactory(true));
 		}
-
 		new AutoBindModels(arp);
+
+		//定时任务
+//		QuartzPlugin quartz = new QuartzPlugin("quartzJob.properties");
+//		quartz.setJobs("quartzJob.properties");
+//		me.add(quartz);
+//		new QuartzCronJob(new QuartzKey(1, "test", "test"), "*/5 * * * * ?", SpiderJob.class).addParam("name", "quartz").start();
+//		SpringKit.getBean(QuartzPY.class).runPYtrigger();
+
 	}
 	
 	@Override
@@ -209,6 +222,10 @@ public class BaseConfig extends JFinalConfig {
 		System.out.println("##################################");
 		System.out.println("############系统启动完成##########");
 		System.out.println("##################################");
+
+
+		//SpringKit.getBean(QuartzPY.class).runPYtrigger();
+		new QuartzCronJob(new QuartzKey(1, "test", "test"), "*/5 * * * * ?", SpiderJob.class).addParam("name", "quartz").start();
 	}
 
 	@Override
