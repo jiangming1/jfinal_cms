@@ -128,6 +128,7 @@ public class ImagealbumController extends BaseProjectController {
 			model.put("create_time", now);
 			model.save();
 		}
+		Integer pidd = model.get("id");
 		renderMessage("保存成功");
 	}
 	

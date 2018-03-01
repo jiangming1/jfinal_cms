@@ -129,6 +129,7 @@ public class ImageController extends BaseProjectController {
 	}
 
 	public void save() {
+		String a = this.getClass().getClassLoader().getResource("").getPath();
 		TbSite site = getBackSite();
 		UploadFile uploadImage = getFile("model.image_url", FileUploadUtils.getUploadTmpPath(site), FileUploadUtils.UPLOAD_MAX);
 		

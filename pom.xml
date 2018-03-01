@@ -138,22 +138,22 @@
 			<version>2.0.6</version>
 		</dependency>
 
-		<dependency>
-			<groupId>jknife</groupId>
-			<artifactId>jknife-ezmvc</artifactId>
-			<version>${jknife.ezmvc_version}</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>jknife</groupId>-->
+			<!--<artifactId>jknife-ezmvc</artifactId>-->
+			<!--<version>${jknife.ezmvc_version}</version>-->
+		<!--</dependency>-->
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.springframework</groupId>-->
+			<!--<artifactId>spring-beans</artifactId>-->
+			<!--<version>${spring.version}</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.springframework</groupId>-->
+			<!--<artifactId>spring-context</artifactId>-->
+			<!--<version>${spring.version}</version>-->
+		<!--</dependency>-->
 
 		<!-- 爬虫需要的jar -->
 		<dependency>
@@ -172,6 +172,13 @@
 			<groupId>cn.dreampie</groupId>
 			<artifactId>jfinal-quartz</artifactId>
 			<version>0.2</version>
+		</dependency>
+
+		<!--引入定时器任务-->
+		<dependency>
+			<groupId>it.sauronsoftware.cron4j</groupId>
+			<artifactId>cron4j</artifactId>
+			<version>2.2.5</version>
 		</dependency>
 		<!-- 数据库 -->
 		<dependency>

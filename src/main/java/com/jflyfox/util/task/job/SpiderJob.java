@@ -3,13 +3,31 @@ package com.jflyfox.util.task.job;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.PathKit;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
+import com.jflyfox.component.util.ImageModel;
+import com.jflyfox.component.util.ImageUtils;
+import com.jflyfox.jfinal.base.SessionUser;
+import com.jflyfox.modules.admin.image.model.TbImage;
+import com.jflyfox.modules.admin.image.model.TbImageAlbum;
+import com.jflyfox.modules.admin.image.model.TbImageTags;
+import com.jflyfox.modules.admin.site.SessionSite;
+import com.jflyfox.modules.admin.site.SiteService;
+import com.jflyfox.modules.admin.site.TbSite;
+import com.jflyfox.system.file.util.FileUploadUtils;
+import com.jflyfox.system.user.SysUser;
+import com.jflyfox.util.DateUtils;
+import com.jflyfox.util.FileUploadUtil;
+import com.jflyfox.util.StrUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -19,19 +37,132 @@ import java.util.regex.Pattern;
  * Created by linzuk on 2018/2/26.
  * 爬虫任务：每天定时爬取一个网站的数据
  */
-public class SpiderJob implements Job {
+public class SpiderJob implements Runnable {
 
-    @Autowired
-    private SpiderJobCallable callable;
+    private SpiderJobCallable callable = new SpiderJobCallable() {
+        @Override
+        public boolean callback(String id, String title, List<String> pictures) {
+            // 打印数据
+            Map<String, Object> data = new HashMap<>();
+            data.put("id", id);
+            data.put("title", title);
+            data.put("pictures", pictures);
+            System.out.println(JSON.toJSONString(data));
+            Integer pid = 0;
+            List remarkList = TbImageAlbum.dao.find("SELECT * FROM tb_image_album WHERE remark = ? " ,id);
+            title = title.replaceAll(" ","_");
+            String[] titles = title.split("/");
+            if(remarkList.size()==0){
+                //创建目录
+                pid =  saveIbum(id,title);
+                for(int i=0;i<pictures.size();i++){
+                    try {
+                        //创建上传图片目录
+                        FileUploadUtil.uploadImgLW(pictures.get(i).toString(),"/u/py/" + title,String.valueOf(i+1));
+                        if(i==pictures.size()-1){
+                            //保存图片
+                            TbSite site = getBackSite();
+                            //UploadFile uploadImage = getBackSite(FileUploadUtil.getProjectPath()+"/u/py/" + title + String.valueOf(i+1) +".jpg", FileUploadUtils.getUploadTmpPath(site), FileUploadUtils.UPLOAD_MAX);
+                            saveImage("http://localhost:8083/u/py/" + title + String.valueOf(i+1) +".jpg", FileUploadUtils.getUploadTmpPath(site),pid,titles[titles.length-1],pictures.get(i).toString(),"/u/py/" + title +"/"+String.valueOf(i+1)+".jpg");
 
-//    public void execute() {
-//        try {
-//            // 执行作业
-//            doSpiderJob(callable);
-//        } catch (IOException e) {
-//            e.printStackTrace();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // TODO: 将数据录入系统就好
+            return false; // true: 之前已经录入过了
+        }
+    };
+    public TbSite getBackSite() {
+        SysUser user = SysUser.dao.findFirstByWhere("where userid = ?",1);
+        if (user == null) {
+            return null;
+        }
+        TbSite site = new SiteService().getSite(user.getBackSiteId());
+        return site;
+    }
+    private boolean saveImage(String imgPath, String tmpPath ,Integer pid,String title,String imgNetUrl,String imageUrl){
+        TbSite site = getBackSite();
+//        UploadFile uploadImage = getFile(imgPath, tmpPath, FileUploadUtils.UPLOAD_MAX);
+
+//        Integer pid = getParaToInt();
+//        TbImage model = getModel(TbImage.class);
+        TbImage model = new TbImage();
+
+        // 图片附件
+//        if (uploadImage != null) {
+//            String fileUrl = uploadHandler(site, uploadImage.getFile(), "image");
+//            model.set("image_url", fileUrl);
 //        }
-//    }
+
+//        // 设置图片信息
+//        if (StrUtils.isNotEmpty(model.getImageNetUrl())) {
+//            ImageModel imageModel = ImageUtils.getIamge(model.getImageNetUrl());
+//            model.setExt(imageModel.getExt());
+//            model.setWidth(imageModel.getWidth() + "");
+//            model.setHeight(imageModel.getHeight() + "");
+//
+//            model.setLinkurl(model.getImageNetUrl());
+//        } else if (StrUtils.isNotEmpty(model.getImageUrl())) {
+//            ImageModel imageModel = ImageUtils
+//                    .getIamge(PathKit.getWebRootPath() + File.separator + model.getImageUrl());
+//            model.setExt(imageModel.getExt());
+//            model.setWidth(imageModel.getWidth() + "");
+//            model.setHeight(imageModel.getHeight() + "");
+//
+//            String linkUrl = getAttr("BASE_PATH") + model.getImageUrl();
+//            model.setLinkurl(linkUrl.replace("\\", "/"));
+//        }
+
+        model.put("album_id",pid);
+        model.put("album_name",title);
+        model.put("image_url",imageUrl);
+        model.put("linkurl",imgPath);
+//        model.put("image_net_url",imgNetUrl);
+        model.put("ext","jpg");
+
+        Integer userid = 1;
+        String now = DateUtils.getNow(DateUtils.DEFAULT_REGEX_YYYY_MM_DD_HH_MIN_SS);
+        model.put("update_id", userid);
+        model.put("update_time", now);
+        // 新增
+        model.remove("id");
+        model.put("create_id", userid);
+        model.put("create_time", now);
+        model.save();
+
+
+
+        // 保存tags
+//        if (pid != null && pid > 0) {
+//            Db.update(" delete from tb_image_tags where image_id = ?", model.getInt("id"));
+//        }
+//        String tags = getPara("tags");
+//        if (StrUtils.isNotEmpty(tags)) {
+//            String[] tagsArr = tags.split(",");
+//            for (int i = 0; i < tagsArr.length; i++) {
+//                String tagname = tagsArr[i];
+//                // 最多5个
+//                if (i >= 5) {
+//                    break;
+//                }
+//                if (StrUtils.isEmpty(tagname)) {
+//                    continue;
+//                }
+//                TbImageTags tag = new TbImageTags();
+//                tag.put("tagname", tagname);
+//                tag.put("image_id", model.getInt("id"));
+//                tag.put("create_id", getSessionUser().getUserid());
+//                tag.put("create_time", getNow());
+//                tag.save();
+//
+//            }
+//        }
+        return false;
+    }
 
     public void doSpiderJob(SpiderJobCallable callable) throws IOException {
         // 登入
@@ -148,8 +279,51 @@ public class SpiderJob implements Job {
         return m;
     }
 
-    @Override
+   // @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        System.out.println("################任务执行#################");
+//        try {
+//            // 执行作业
+//            doSpiderJob(callable);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    private Integer saveIbum(String id ,String title){
+        String[] ibums = title.split("/");
+        Integer pid = null ;
+        for(int i =0 ; i <ibums.length;i++){
+            TbImageAlbum model = new TbImageAlbum();
+
+            if(i==0){
+                model.put("remark",id);
+                pid = 5;
+            }
+            model.setParentId(pid);
+            model.setName(ibums[i]);
+            model.setSort(1);
+
+            Integer userid = 1;// admin用户
+            String now = DateUtils.getNow(DateUtils.DEFAULT_REGEX_YYYY_MM_DD_HH_MIN_SS);
+            model.put("update_id", userid);
+            model.put("update_time", now);
+//            if (pid != null && pid > 0) { // 更新
+//                model.update();
+//            } else { // 新增
+                model.remove("id");
+                model.put("create_id", userid);
+                model.put("create_time", now);
+                model.save();
+//            }
+             pid = model.get("id");
+        }
+        return pid;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("################任务执行 cron4j#################");
         try {
             // 执行作业
             doSpiderJob(callable);

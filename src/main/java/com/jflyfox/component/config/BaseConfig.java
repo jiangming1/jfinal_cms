@@ -19,9 +19,9 @@ package com.jflyfox.component.config;
 import cn.dreampie.quartz.QuartzKey;
 import cn.dreampie.quartz.QuartzPlugin;
 import cn.dreampie.quartz.job.QuartzCronJob;
+import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import com.jflyfox.util.task.job.QuartzPY;
 import com.jflyfox.util.task.job.SpiderJob;
-import jknife.ezmvc.plugin.spring.SpringKit;
 import org.beetl.core.GroupTemplate;
 import org.beetl.ext.jfinal3.JFinal3BeetlRenderFactory;
 
@@ -74,6 +74,10 @@ import com.jflyfox.util.cache.impl.MemoryCache;
 import com.jflyfox.util.cache.impl.MemorySerializeCache;
 import com.jflyfox.util.serializable.FSTSerializer;
 import com.jflyfox.util.serializable.SerializerManage;
+import org.quartz.Job;
+import org.quartz.spi.SchedulerPlugin;
+
+import java.util.Timer;
 
 /**
  * API引导式配置
@@ -81,6 +85,7 @@ import com.jflyfox.util.serializable.SerializerManage;
 public class BaseConfig extends JFinalConfig {
 
 	private static final String CONFIG_WEB_ROOT = "{webroot}";
+
 
 	public void configConstant(Constants me) {
 		me.setDevMode(isDevMode());
@@ -162,12 +167,13 @@ public class BaseConfig extends JFinalConfig {
 		new AutoBindModels(arp);
 
 		//定时任务
-//		QuartzPlugin quartz = new QuartzPlugin("quartzJob.properties");
+//		QuartzPlugin quartz = new QuartzPlugin();
 //		quartz.setJobs("quartzJob.properties");
 //		me.add(quartz);
-//		new QuartzCronJob(new QuartzKey(1, "test", "test"), "*/5 * * * * ?", SpiderJob.class).addParam("name", "quartz").start();
-//		SpringKit.getBean(QuartzPY.class).runPYtrigger();
+		//new QuartzCronJob(new QuartzKey(1, "test", "test"), "* 50 11 * * ?", SpiderJob.class).addParam("name", "quartz").start();
 
+		Cron4jPlugin cp = new Cron4jPlugin("task.txt");//直接配置cron4j
+		me.add(cp);
 	}
 	
 	@Override
@@ -223,9 +229,7 @@ public class BaseConfig extends JFinalConfig {
 		System.out.println("############系统启动完成##########");
 		System.out.println("##################################");
 
-
-		//SpringKit.getBean(QuartzPY.class).runPYtrigger();
-		new QuartzCronJob(new QuartzKey(1, "test", "test"), "*/5 * * * * ?", SpiderJob.class).addParam("name", "quartz").start();
+//		new QuartzCronJob(new QuartzKey(1, "image", "image"), "* 04 15 * * ?", SpiderJob.class).addParam("name", "quartz").start();
 	}
 
 	@Override
