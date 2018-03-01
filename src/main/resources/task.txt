@@ -13,7 +13,7 @@
 # cron4j 集成cron 只有 分 时 天 月 周  没有秒
 
 cron4j=test
-test.cron= 48 * * * *
+test.cron= 31 * * * *
 test.class=com.jflyfox.util.task.job.SpiderJob
 test.daemon=true
 test.enable=true

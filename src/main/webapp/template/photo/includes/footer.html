@@ -30,3 +30,30 @@
 </script>
 <script src=" http://su.bdimg.com/static/dspui/js/uf.js" type="text/javascript"></script>
  -->
+<script>
+    $("#album").empty();
+    $.ajax({
+        type:'post',
+        url:"/album/image/imgAlbum",
+        async:false,
+        success:function(data){
+            alert(data.data[0].linkurl);
+            var head="";
+            for (var i = 0; i < data.data.length; i++) {
+                head += '<div >';
+				if(i%6==0 ||i==0)head+='<div class="row">';
+                head+=	'<div class="col-sm-6 col-md-2">'+
+									'<div class="thumbnail">'+
+										'<a href="#"  onclick="alert(222333);"><img class="img-thumbnail" style="width:250px;height:250px;" src="'+data.data[i].linkurl+'" alt="..." title="点击查看"></a>'+
+										'<div>'+data.data[i].name+'</div>'+
+									'</div>'+
+								'</div>';
+                if(i%6==0||i==0)head+='</div>';
+                head+='</div>';
+            }
+            $('#album').append(head);
+
+        }
+
+    });
+</script>

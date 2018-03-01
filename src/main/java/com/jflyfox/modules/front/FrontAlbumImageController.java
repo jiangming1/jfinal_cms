@@ -10,6 +10,11 @@ import com.jflyfox.modules.admin.image.model.TbImageAlbum;
 import com.jflyfox.modules.front.interceptor.FrontInterceptor;
 import com.jflyfox.modules.front.service.FrontImageService;
 import com.jflyfox.util.NumberUtils;
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @ControllerBind(controllerKey = "/album/image")
 public class FrontAlbumImageController extends BaseProjectController {
@@ -67,5 +72,28 @@ public class FrontAlbumImageController extends BaseProjectController {
 		setAttr(JFlyFoxUtils.TITLE_ATTR, imageName + getAttr(JFlyFoxUtils.TITLE_ATTR));
 
 		renderAuto(path + "common_image.html");
+	}
+
+	@Before(FrontInterceptor.class)
+	public void imgAlbum() {
+		Map<Object,Object> ret = new HashMap<Object,Object>();
+		String sql ="select * from tb_image_album where 1=1 and remark IS NOT NULL order by ID asc";
+
+		List<TbImageAlbum> tbImageAlbumList = TbImageAlbum.dao.find(sql);
+		for(int i =0 ; i<tbImageAlbumList.size(); i++){
+			String sql1 = "SELECT * FROM tb_image  WHERE album_id = '"+tbImageAlbumList.get(i).getId()+"'";
+			List<TbImage> tbImages = TbImage.dao.find(sql1);
+
+//			Map tbImageMap = new HashMap();
+//			tbImageMap.put("tbImages",tbImages);
+//			tbImageAlbum.put("tbImageMap",tbImageMap);
+			if(tbImages.size()>0){
+				TbImageAlbum tbImageAlbum = tbImageAlbumList.get(i);
+				tbImageAlbum.put(tbImages.get(0));
+				tbImageAlbumList.set(i,tbImageAlbum);
+			}
+		}
+		ret.put("data",tbImageAlbumList);
+		renderJson(ret);
 	}
 }
