@@ -1,12 +1,17 @@
 package com.jflyfox.modules;
 
 import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.Page;
 import com.jflyfox.component.base.BaseProjectController;
 import com.jflyfox.component.util.ImageCode;
 import com.jflyfox.component.util.JFlyFoxUtils;
+import com.jflyfox.jfinal.base.Paginator;
 import com.jflyfox.jfinal.component.annotation.ControllerBind;
+import com.jflyfox.jfinal.component.db.SQLUtils;
 import com.jflyfox.modules.admin.folder.FolderService;
 import com.jflyfox.modules.admin.folder.TbFolder;
+import com.jflyfox.modules.admin.image.model.TbImage;
+import com.jflyfox.modules.admin.image.model.TbImageAlbum;
 import com.jflyfox.modules.admin.site.SessionSite;
 import com.jflyfox.modules.front.Home;
 import com.jflyfox.modules.front.interceptor.FrontInterceptor;
@@ -17,6 +22,8 @@ import com.jflyfox.system.user.UserCache;
 import com.jflyfox.util.Config;
 import com.jflyfox.util.NumberUtils;
 import com.jflyfox.util.StrUtils;
+
+import java.util.List;
 
 /**
  * CommonController
@@ -77,6 +84,51 @@ public class CommonController extends BaseProjectController {
 		} else if (StrUtils.isNotEmpty(path)) {
 			renderAuto(path);
 		} else {
+			//renderAuto(Home.PATH + urlKey + ".html");
+
+
+			//跳转到自定义相册展示
+			TbImage model = getModelByAttr(TbImage.class);
+
+			SQLUtils sql = new SQLUtils(" from tb_image_album t where 1=1 ");
+//			if (model.getAttrValues().length != 0) {
+//				sql.setAlias("t");
+//				sql.whereEquals("album_id", model.getAlbumId());
+//				sql.whereLike("name", model.getStr("name"));
+//				sql.whereEquals("status", model.getInt("status"));
+//			}
+
+
+			sql.append(" and t.status = 1 and parent_id <> 0 ");
+			// 排序
+			String orderBy = getBaseForm().getOrderBy();
+			if (StrUtils.isEmpty(orderBy)) {
+				sql.append(" order by sort,id desc");
+			} else {
+				sql.append(" order by ").append(orderBy);
+			}
+
+			String sqlSelect = "select t.*,(select ifnull(im.image_net_url,im.image_url) " //
+					+ " from tb_image im where im.album_id = t.id order by sort,id desc limit 1 ) as imageUrl ";
+			//List<TbImageAlbum> list = TbImageAlbum.dao.find(sqlSelect + sql.toString());
+			Paginator paginator = new Paginator();
+			Integer pageNo = getParaToInt("pageNo",0);
+			if (pageNo != null && pageNo > 0) {
+				paginator.setPageNo(pageNo);
+			}
+			Integer pageSize = getParaToInt("recordsperpage",18);
+			if (pageSize != null && pageSize > 0) {
+				paginator.setPageSize(pageSize);
+			}
+			Page<TbImageAlbum> page = TbImageAlbum.dao.paginate(paginator, sqlSelect, //
+					sql.toString().toString());
+
+			List<TbImageAlbum> albumsType = TbImageAlbum.dao.find("SELECT * FROM tb_image_album WHERE parent_id = 0 ;");
+
+
+			setAttr("page", page);
+//			setAttr("attr", model);
+			setAttr("albumsType",albumsType);
 			renderAuto(Home.PATH + urlKey + ".html");
 		}
 

@@ -7,6 +7,6 @@ import java.util.List;
  */
 public interface SpiderJobCallable {
 
-    boolean callback(String id, String title, List<String> pictures);
+    boolean callback(String category, String id, String title, List<String> pictures);
 
 }

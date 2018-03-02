@@ -960,7 +960,7 @@ public class FileUploadUtil {
 //        File imageFile = new File("/u/py/" + filePath);
 //        if (!imageFile.exists())
 //            imageFile.mkdir();
-        download(urls,imgName+".jpg",filePath);
+        download(urls,imgName,filePath);
 //        //打开链接
 //        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 //        //设置请求方式为"GET"

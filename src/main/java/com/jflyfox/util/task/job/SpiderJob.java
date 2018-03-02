@@ -7,6 +7,7 @@ import com.jfinal.config.Routes;
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.template.ext.directive.Str;
 import com.jfinal.upload.UploadFile;
 import com.jflyfox.component.util.ImageModel;
 import com.jflyfox.component.util.ImageUtils;
@@ -44,7 +45,7 @@ public class SpiderJob implements Runnable {
 
     private SpiderJobCallable callable = new SpiderJobCallable() {
         @Override
-        public boolean callback(String id, String title, List<String> pictures) {
+        public boolean callback(String category, String id, String title, List<String> pictures) {
             // 打印数据
             Map<String, Object> data = new HashMap<>();
             data.put("id", id);
@@ -52,8 +53,14 @@ public class SpiderJob implements Runnable {
             data.put("pictures", pictures);
             System.out.println(JSON.toJSONString(data));
             String pid = "";
-            Record p = Db.findFirst("SELECT ID FROM tb_image_album WHERE name = '内衣' ");
-            pid = String.valueOf(p.get("ID"));
+            Record p = new Record();
+            try {
+                p = Db.findFirst("SELECT ID FROM tb_image_album WHERE name = '"+category+"' ");
+                pid = String.valueOf(p.get("ID"));
+            }catch (Exception e) {
+                pid =  saveIbum(null,category,"");
+            }
+
             List remarkList = TbImageAlbum.dao.find("SELECT * FROM tb_image_album WHERE remark = ? " ,id);
             title = title.replaceAll(" ","_");
 //            String[] titles = title.split("/");
@@ -67,13 +74,13 @@ public class SpiderJob implements Runnable {
                                 + new SecureRandom().nextInt(999999) + "." + fileExt;
                         //创建上传图片目录
                         FileUploadUtil.uploadImgLW(pictures.get(i).toString(),"/jflyfox/photo/image/" ,fileName);
-                        if(i==pictures.size()-1){
+//                        if(i==pictures.size()-1){
                             //保存图片
-                            TbSite site = getBackSite();
+                            //TbSite site = getBackSite();
                             //UploadFile uploadImage = getBackSite(FileUploadUtil.getProjectPath()+"/u/py/" + title + String.valueOf(i+1) +".jpg", FileUploadUtils.getUploadTmpPath(site), FileUploadUtils.UPLOAD_MAX);
-                            saveImage("http://localhost:8083/jflyfox/photo/image/" + fileName,"/jflyfox/photo/image/" + fileName,fileName,fileExt,pid);
+                            saveImage(FileUploadUtil.getProjectPath()+"/jflyfox/photo/image/" + fileName,"jflyfox/photo/image/" + fileName,fileName,fileExt,pid);
 
-                        }
+//                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -115,25 +122,35 @@ public class SpiderJob implements Runnable {
         return false;
     }
 
+    // -----------------------------------------------------------------------------------------------------------
+
+    private static Map<String, String> categories = new HashMap<>();
+    static {
+        categories.put("内衣", "http://www.sxxl.com/StyleGallery-index-extid-32940-cid-2-channel-32209.html");
+    }
+
     public void doSpiderJob(SpiderJobCallable callable) throws IOException {
         // 登入
         String ssoUrl = login();
         System.out.println("sso: " + ssoUrl);
         // 单点登入
         sso(ssoUrl);
-        // 请求页面
-        String json = pageDate(1);
-        // 提取总页数
-        int totalPage = totalPage(json);
-        System.out.println(totalPage);
-        // 开始抓取数据
-        for (int i = 1; i <= totalPage; i++) {
-            String dataJson = pageDate(i);
-            System.out.println(i + " : " + dataJson);
-            // 从json提出去有用的数据
-            boolean isBreak = fetchUsableData(dataJson, callable);
-            System.out.println("第"+i+"页数据获取完毕！");
-            if (isBreak) break;
+        for (String categoryName : categories.keySet()) {
+            String categoryUrl = categories.get(categoryName);
+            // 请求页面
+            String json = pageDate(categoryUrl, 1);
+            // 提取总页数
+            int totalPage = totalPage(json);
+            System.out.println(totalPage);
+            // 开始抓取数据
+            for (int i = 1; i <= totalPage; i++) {
+                String dataJson = pageDate(categoryUrl, i);
+                System.out.println(i + " : " + dataJson);
+                // 从json提出去有用的数据
+                boolean isBreak = fetchUsableData(categoryName, dataJson, callable);
+                System.out.println("第"+i+"页数据获取完毕！");
+                if (isBreak) break;
+            }
         }
     }
 
@@ -166,8 +183,8 @@ public class SpiderJob implements Runnable {
     }
 
     // 蕾丝列表页面请求
-    private static String pageDate(int page) throws IOException {
-        Connection conn = Jsoup.connect("http://www.sxxl.com/StyleGallery-index-extid-32940-cid-2-channel-32209.html")
+    private static String pageDate(String categoryUrl, int page) throws IOException {
+        Connection conn = Jsoup.connect(categoryUrl)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36")
                 .data("p", "" + page)
                 .ignoreContentType(true)
@@ -190,11 +207,11 @@ public class SpiderJob implements Runnable {
         return Integer.parseInt(page.substring("</strong>/".length(), page.length() - "&nbsp;&nbsp;".length()));
     }
 
-    private static boolean fetchUsableData(String dataJson, SpiderJobCallable callable) throws IOException {
+    private static boolean fetchUsableData(String categoryName, String dataJson, SpiderJobCallable callable) throws IOException {
         System.out.println(dataJson);
         JSONObject jsonObj = JSON.parseObject(dataJson);
         JSONArray list = jsonObj.getJSONArray("list");
-        for (int i = 0; i < 1; i++) {//list.size()
+        for (int i = 0; i < list.size(); i++) {
             JSONObject obj = list.getJSONObject(i);
             // 信息提取: id、title
             String id = obj.getString("id");
@@ -213,7 +230,7 @@ public class SpiderJob implements Runnable {
                 }
             }
             // 回调数据
-            boolean isBreak = callable.callback(id, title, pictures);
+            boolean isBreak = callable.callback(categoryName, id, title, pictures);
             if (isBreak) return true;
         }
         return false;
@@ -244,7 +261,11 @@ public class SpiderJob implements Runnable {
     private String saveIbum(String pid ,String title,String remark){
         TbImageAlbum model = new TbImageAlbum();
 
-            model.setParentId(Integer.valueOf(pid));
+            if (pid==null){
+                model.setParentId(0);
+            }else{
+                model.setParentId(Integer.valueOf(pid));
+            }
             model.setName(title);
             model.setSort(1);
 

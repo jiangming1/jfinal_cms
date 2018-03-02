@@ -1,69 +1,93 @@
 <%
-var images = tempImage.images(paginator.pageNo,paginator.pageSize);
+var headContent = {
+include("/pages/template/head.html"){}
 %>
 
-<% 
-	var headContent = {
-%>
-	<% include("/template/photo/includes/header.html"){} %>
 <script type="text/javascript">
-<!--
-	$(function(){
 
-	});
-//-->
+    var oper;
+    jQuery(function($) {
+        // 页面方法
+        oper = {
+            width : 800,
+            height : 450,
+            form : document.form1,
+            list : function() {
+                var url = 'front/imageshow/list';
+                this.form.action = url;
+                this.form.submit();
+            }
+            ,edit : function(id) {
+                var url = 'front/imageshow/edit/'+id;
+                this.form.action = url;
+                this.form.submit();
+            }
+            ,
+        };
+        //显示Menu索引
+        showMenu('page_imageshow');
+    });
+
+    //分页
+    var paginator = function(page) {
+        oper.list();
+    };
 </script>
 
 <%
 };
-%>
 
-<%
 var bodyContent = {
 %>
-<!--<%  include("/template/photo/includes/header_menu.html"){} %>	-->
+<form name="form1" action="" method="post"  class="form-inline" role="form">
+	<!-- 菜单 -->
 
 
-<div class="container">
-
-	<div class="row">
-	 	
-		<div class="col-md-10" id="album">
-		 <!--<div class="row">-->
-		 <!--<% for(item in images.list){ %>-->
-		<!--<div class="col-sm-4 col-md-3">-->
-		       <!--<div class="thumbnail">-->
-		         <!--<a href="${BASE_PATH }album/image/img/${item.id}.html" target="_blank">-->
-		         <!--<img alt="${item.title}" src="${flyfox.getImage(item)}" data-holder-rendered="true" style="height: 200px; width: 100%; display: block;">-->
-		         <!--</a>-->
-		         <!--<div class="caption">-->
-		           <!--<a href="${BASE_PATH }album/image/img/${item.id}.html" target="_blank">${item.name}</a>-->
-		         <!--</div>-->
-		       <!--</div>-->
-		     <!--</div>-->
-		 <!--<% } %>-->
-		 <!--</div>-->
-		 <%include("/template/photo/includes/paginator.html",{page:images}){} %>
-		
+	<div class="tableSearch">
+		<%  //查询列表 %>
+		<div class="form-group">
+			<input class="form-control" type="text" name="attr.name" value="${attr.name!''}"
+				   placeholder="请输入名称" required='required' />
 		</div>
-	
-	  	<div class="col-md-2">	
-		
-		<!-- 推荐图片 -->
-	  	<%  include("/template/photo/includes/recommend.html"){} %>
-	  	
-		<!-- 友情链接 -->
-	  	<%  include("/template/photo/includes/friendly.html"){} %>
-	  	
+		<div class="form-group">
+			<select name="attr.album_id" class="form-control" >
+				<option value="-1">--请选择--</option>
+				<% for(item in albumsType){ %>
+				<option value="${item.id}" >${item.name}</option>
+				<%} %>
+			</select>
 		</div>
+
+		<button type="button" class="btn btn-default" onclick="oper.list();" name="search">
+			<span class="glyphicon glyphicon-search"></span> 查 询
+		</button>
+
 	</div>
 
-</div>
-<%  include("/template/photo/includes/footer.html"){} %>
-	
-<a id="scrollTop" href="javacript:void(0);" title="返回顶部" style="display: inline;"></a>
-	
+	<div style="margin: 10px;width: 98%;">
+		<div class="row">
+
+			<% for(item in page.list){ %>
+			<div class="col-sm-6 col-md-2">
+				<div class="thumbnail">
+					<a href="#"  onclick="oper.edit(${item.id});return false;"><img class="img-thumbnail" style="width:250px;height:250px;" src="${item.imageUrl!}" alt="..." title="点击查看"></a>
+					<div class="caption">
+						<p style="width:200px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${item.name}</p>
+					</div>
+				</div>
+			</div>
+			<%} %>
+
+		</div>
+
+
+	</div>
+
+	<%include("/pages/includes/paginator.html"){} %>
+
+</form>
 <%}; %>
+
 
 <% layout("/pages/template/_layout.html",{head:headContent,body:bodyContent}){ %>
 <%} %>
