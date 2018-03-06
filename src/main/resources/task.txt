@@ -14,7 +14,7 @@
 
 cron4j=test,test1
 
-test.cron= 45 16 * * *
+test.cron= 22 19 * * *
 test.class=com.jflyfox.util.task.job.SpiderJob
 test.daemon=true
 test.enable=true
