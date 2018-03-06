@@ -16,6 +16,7 @@
  */
 package com.jflyfox.component.config;
 
+import com.jfinal.core.JFinal;
 import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import org.beetl.core.GroupTemplate;
 import org.beetl.ext.jfinal3.JFinal3BeetlRenderFactory;
@@ -270,6 +271,13 @@ public class BaseConfig extends JFinalConfig {
 	
 	private boolean isDevMode() {
 		return Config.getToBoolean("CONSTANTS.DEV_MODE");
+	}
+
+	public static void main(String[] args) {
+		String webAppDir = args[0];
+		int port = Integer.parseInt(args[1]);
+		System.setProperty("org.eclipse.jetty.server.Request.maxFormContentSize", "5000000");
+		JFinal.start(webAppDir, port, "/", 5);
 	}
 
 
