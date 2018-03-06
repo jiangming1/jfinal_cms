@@ -3,6 +3,8 @@ package com.jflyfox.util.task.job;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.FileKit;
+import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jflyfox.modules.admin.image.model.TbImage;
@@ -12,8 +14,13 @@ import com.jflyfox.modules.admin.site.TbSite;
 import com.jflyfox.system.user.SysUser;
 import com.jflyfox.util.DateUtils;
 import com.jflyfox.util.FileUploadUtil;
+import com.xiaoleilu.hutool.http.HttpUtil;
+import com.xiaoleilu.hutool.util.FileUtil;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import sun.nio.ch.FileKey;
+
+import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
@@ -35,10 +42,10 @@ public class SpiderJob implements Runnable {
 //            data.put("title", title);
 //            data.put("pictures", pictures);
 //            System.out.println(JSON.toJSONString(data));
-            String pid = "";
-            Record p = new Record();
+            String fileDir = PathKit.getWebRootPath() + File.separator + "jflyfox" + File.separator + "photo" + File.separator + "image" + File.separator;
+            String pid;
             try {
-                p = Db.findFirst("SELECT ID FROM tb_image_album WHERE name = '"+category+"' ");
+                Record p = Db.findFirst("SELECT ID FROM tb_image_album WHERE name = '" + category + "' ");
                 pid = String.valueOf(p.get("ID"));
             }catch (Exception e) {
                 pid =  saveIbum(null,category,"");
@@ -57,9 +64,10 @@ public class SpiderJob implements Runnable {
                     String fileName = DateUtils.getNow("yyyyMMdd_HHmmss") + "_" //
                             + new SecureRandom().nextInt(999999) + "." + fileExt;
                     //创建上传图片目录
-                    FileUploadUtil.download(pictures.get(i).toString(),"/jflyfox/photo/image/" ,fileName);
+                    File file = new File(fileDir, fileName);
+                    HttpUtil.downloadFile(pictures.get(i), file);
                     //保存图片
-                    saveImage(FileUploadUtil.getProjectPath().replace("\\","/")+"jflyfox/photo/image/" + fileName,"jflyfox/photo/image/" + fileName,fileName,fileExt,pid,title);
+                    saveImage(file.getAbsolutePath(),"/jflyfox/photo/image/" + fileName, fileName, fileExt, pid, title);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -67,6 +75,10 @@ public class SpiderJob implements Runnable {
             return false;
         }
     };
+
+    public static void main(String[] args) {
+        System.out.println();
+    }
 
 
     // -----------------------------------------------------------------------------------------------------------
