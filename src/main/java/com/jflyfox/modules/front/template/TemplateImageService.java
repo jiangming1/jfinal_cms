@@ -27,6 +27,10 @@ public class TemplateImageService extends BaseService {
 		return service.getAlbumList();
 	}
 
+	public Page<TbImageAlbum> albumPage(int pageNo, int pageSize , int albumId) {return service.getAlbumPage(new Paginator(pageNo, pageSize),albumId);}
+
+	public List<TbImageAlbum> albumType(){ return service.getAlbumType();}
+
 	public TbImageAlbum album(Integer albumId) {
 		return service.getAlbum(albumId);
 	}

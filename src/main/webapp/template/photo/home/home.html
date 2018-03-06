@@ -1,6 +1,10 @@
 <%
+var albumType = tempImage.albumType();
+%>
+<%
 var headContent = {
 include("/pages/template/head.html"){}
+
 %>
 
 <script type="text/javascript">
@@ -22,16 +26,14 @@ include("/pages/template/head.html"){}
                 this.form.action = url;
                 this.form.submit();
             }
-            ,
         };
-        //显示Menu索引
-        showMenu('page_imageshow');
     });
 
     //分页
     var paginator = function(page) {
         oper.list();
     };
+
 </script>
 
 <%
@@ -52,7 +54,7 @@ var bodyContent = {
 		<div class="form-group">
 			<select name="attr.album_id" class="form-control" >
 				<option value="-1">--请选择--</option>
-				<% for(item in albumsType){ %>
+				<% for(item in albumType){ %>
 				<option value="${item.id}" >${item.name}</option>
 				<%} %>
 			</select>
@@ -83,9 +85,12 @@ var bodyContent = {
 
 	</div>
 
-	<%include("/pages/includes/paginator.html"){} %>
+	<%include("/pages/includes/paginator.html",{page:page}){} %>
+
+
 
 </form>
+
 <%}; %>
 
 

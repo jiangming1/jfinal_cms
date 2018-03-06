@@ -16,12 +16,7 @@
  */
 package com.jflyfox.component.config;
 
-import cn.dreampie.quartz.QuartzKey;
-import cn.dreampie.quartz.QuartzPlugin;
-import cn.dreampie.quartz.job.QuartzCronJob;
 import com.jfinal.plugin.cron4j.Cron4jPlugin;
-import com.jflyfox.util.task.job.QuartzPY;
-import com.jflyfox.util.task.job.SpiderJob;
 import org.beetl.core.GroupTemplate;
 import org.beetl.ext.jfinal3.JFinal3BeetlRenderFactory;
 
@@ -166,13 +161,7 @@ public class BaseConfig extends JFinalConfig {
 		}
 		new AutoBindModels(arp);
 
-		//定时任务
-//		QuartzPlugin quartz = new QuartzPlugin();
-//		quartz.setJobs("quartzJob.properties");
-//		me.add(quartz);
-		//new QuartzCronJob(new QuartzKey(1, "test", "test"), "* 50 11 * * ?", SpiderJob.class).addParam("name", "quartz").start();
-
-		Cron4jPlugin cp = new Cron4jPlugin("task.txt");//直接配置cron4j
+		Cron4jPlugin cp = new Cron4jPlugin("task.txt");//直接配置cron4j  抓取图片
 		me.add(cp);
 	}
 	
@@ -229,7 +218,6 @@ public class BaseConfig extends JFinalConfig {
 		System.out.println("############系统启动完成##########");
 		System.out.println("##################################");
 
-//		new QuartzCronJob(new QuartzKey(1, "image", "image"), "* 04 15 * * ?", SpiderJob.class).addParam("name", "quartz").start();
 	}
 
 	@Override

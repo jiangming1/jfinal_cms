@@ -36,7 +36,7 @@
 				var url = 'admin/imagealbum/del/'+id;
 				var title = '删除相册';
 				Confirm("确认要删除该相册吗？", function() {
-					Iframe(url, 450, 320, title);
+					Iframe(url, 450, 400, title);
 				});
 			}
 		};
@@ -87,12 +87,12 @@ var bodyContent = {
 <div style="margin: 10px;width: 98%;">
 	<div class="row">
 	
-		<% for(item in list){ %>
+		<% for(item in page.list){ %>
 			<div class="col-sm-6 col-md-2">
 		    <div class="thumbnail">
 		      <a href="#"  onclick="oper.edit(${item.id});return false;"><img class="img-thumbnail" style="width:250px;height:250px;" src="${item.imageUrl!}" alt="..." title="点击查看"></a>
 		      <div class="caption">
-		        <p>${item.name}(${item.id})${item.status==2?"<span style='color:red;'> （隐藏）</span>":""}</p>
+			  	<p style="width:200px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${item.name}(${item.id})${item.status==2?"<span style='color:red;'> （隐藏）</span>":""}</p>
 		        <p><a href="#" onclick="oper.editalbum(${item.id});return false;" class="btn btn-link" role="button">编辑相册</a> 
 		        <a href="#" onclick="oper.delalbum(${item.id});return false;" class="btn btn-link" role="button">删除相册</a></p>
 		      </div>
@@ -104,8 +104,8 @@ var bodyContent = {
 
 
 </div>
-		
-		
+
+		<%include("/pages/includes/paginator.html"){} %>
 	</form>
 <%}; %>
 

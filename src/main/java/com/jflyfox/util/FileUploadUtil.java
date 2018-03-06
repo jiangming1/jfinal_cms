@@ -960,7 +960,7 @@ public class FileUploadUtil {
 //        File imageFile = new File("/u/py/" + filePath);
 //        if (!imageFile.exists())
 //            imageFile.mkdir();
-        download(urls,imgName,filePath);
+        download(urls,filePath,imgName);
 //        //打开链接
 //        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 //        //设置请求方式为"GET"
@@ -1004,7 +1004,8 @@ public class FileUploadUtil {
         return outStream.toByteArray();
     }
 
-    public static void download(String urlString, String filename,String savePath) throws Exception {
+    //下载图片
+    public static void download(String urlString,String savePath, String filename) throws Exception {
         // 构造URL
         URL url = new URL(urlString);
         // 打开连接

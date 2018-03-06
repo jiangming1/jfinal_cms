@@ -12,8 +12,15 @@
 # 除号 /：表示指定一个值的增加幅度。例如 n/m表示从 n 开始，每次增加 m 的时间点执行
 # cron4j 集成cron 只有 分 时 天 月 周  没有秒
 
-cron4j=test
-test.cron= 31 * * * *
+cron4j=test,test1
+
+test.cron= 45 16 * * *
 test.class=com.jflyfox.util.task.job.SpiderJob
 test.daemon=true
 test.enable=true
+
+test1.cron= */3 * * * *
+test1.class=com.jflyfox.util.task.job.UploadOssJob
+test1.daemon=false
+test1.enable=true
+

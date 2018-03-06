@@ -5,8 +5,10 @@ import java.util.List;
 import com.jfinal.plugin.activerecord.Page;
 import com.jflyfox.jfinal.base.BaseService;
 import com.jflyfox.jfinal.base.Paginator;
+import com.jflyfox.jfinal.component.db.SQLUtils;
 import com.jflyfox.modules.admin.image.model.TbImage;
 import com.jflyfox.modules.admin.image.model.TbImageAlbum;
+import com.jflyfox.util.StrUtils;
 import com.jflyfox.util.cache.CacheManager;
 
 public class FrontImageService extends BaseService {
@@ -32,6 +34,49 @@ public class FrontImageService extends BaseService {
 	public List<TbImageAlbum> getAlbumList() {
 		String key = "albumList";
 		String sql = "select * from tb_image_album t where  status = 1 order by sort,id desc";
+		return TbImageAlbum.dao.findCache(cacheName, key, sql);
+	}
+
+	/**
+	 * 返回相册分页
+	 */
+	public Page<TbImageAlbum> getAlbumPage(Paginator paginator , int albumId){
+		String key = ("photoAlbum_" + paginator.getPageNo() + "_" + paginator.getPageSize());
+		SQLUtils sql = new SQLUtils(" from tb_image_album t where 1=1 ");
+//			if (model.getAttrValues().length != 0) {
+//				sql.setAlias("t");
+//				sql.whereEquals("album_id", model.getAlbumId());
+//				sql.whereLike("name", model.getStr("name"));
+//				sql.whereEquals("status", model.getInt("status"));
+//			}
+
+
+			sql.append(" and t.status = 1 and parent_id <> 0 ");
+			// 排序
+//			String orderBy = getBaseForm().getOrderBy();
+//			if (StrUtils.isEmpty(orderBy)) {
+//				sql.append(" order by sort,id desc");
+//			} else {
+//				sql.append(" order by ").append(orderBy);
+//			}
+		String sqlSelect = "select t.*,(select ifnull(im.image_net_url,im.image_url) " //
+					+ " from tb_image im where im.album_id = t.id order by sort,id desc limit 1 ) as imageUrl ";
+//		Paginator paginator = new Paginator();
+//		int a = 1;
+//		int b = 18;
+//		paginator.setPageNo(a);
+//		paginator.setPageSize(b);
+		Page<TbImageAlbum> page = TbImageAlbum.dao.paginateCache(cacheName, key, paginator, sqlSelect , sql.toString());
+		return page;
+	}
+
+	/**
+	 * 返回相册类型
+	 * @return
+	 */
+	public List<TbImageAlbum> getAlbumType() {
+		String key = "albumType";
+		String sql = "select * from tb_image_album t where  status = 1 and parent_id = 0 order by sort,id desc";
 		return TbImageAlbum.dao.findCache(cacheName, key, sql);
 	}
 
@@ -105,7 +150,6 @@ public class FrontImageService extends BaseService {
 	 * 2015年4月29日 下午4:48:24 flyfox 369191470@qq.com
 	 * 
 	 * @param paginator
-	 * @param folder_id
 	 * @return
 	 */
 	public Page<TbImage> getRecommendImages(Paginator paginator) {

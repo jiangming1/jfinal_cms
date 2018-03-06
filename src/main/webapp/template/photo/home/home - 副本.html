@@ -65,3 +65,6 @@ var bodyContent = {
 
 <% layout("/pages/template/_layout.html",{head:headContent,body:bodyContent}){ %>
 <%} %>
+
+//目录下拉框
+${item.id==attr.album_id?'selected':''}

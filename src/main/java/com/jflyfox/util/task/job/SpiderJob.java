@@ -3,34 +3,17 @@ package com.jflyfox.util.task.job;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jfinal.config.Routes;
-import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.template.ext.directive.Str;
-import com.jfinal.upload.UploadFile;
-import com.jflyfox.component.util.ImageModel;
-import com.jflyfox.component.util.ImageUtils;
-import com.jflyfox.jfinal.base.SessionUser;
 import com.jflyfox.modules.admin.image.model.TbImage;
 import com.jflyfox.modules.admin.image.model.TbImageAlbum;
-import com.jflyfox.modules.admin.image.model.TbImageTags;
-import com.jflyfox.modules.admin.site.SessionSite;
 import com.jflyfox.modules.admin.site.SiteService;
 import com.jflyfox.modules.admin.site.TbSite;
-import com.jflyfox.system.file.model.FileUploadBean;
-import com.jflyfox.system.file.util.FileUploadUtils;
 import com.jflyfox.system.user.SysUser;
 import com.jflyfox.util.DateUtils;
 import com.jflyfox.util.FileUploadUtil;
-import com.jflyfox.util.StrUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
-import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
@@ -47,11 +30,11 @@ public class SpiderJob implements Runnable {
         @Override
         public boolean callback(String category, String id, String title, List<String> pictures) {
             // 打印数据
-            Map<String, Object> data = new HashMap<>();
-            data.put("id", id);
-            data.put("title", title);
-            data.put("pictures", pictures);
-            System.out.println(JSON.toJSONString(data));
+//            Map<String, Object> data = new HashMap<>();
+//            data.put("id", id);
+//            data.put("title", title);
+//            data.put("pictures", pictures);
+//            System.out.println(JSON.toJSONString(data));
             String pid = "";
             Record p = new Record();
             try {
@@ -63,64 +46,28 @@ public class SpiderJob implements Runnable {
 
             List remarkList = TbImageAlbum.dao.find("SELECT * FROM tb_image_album WHERE remark = ? " ,id);
             title = title.replaceAll(" ","_");
-//            String[] titles = title.split("/");
-            if(remarkList.size()==0){
-                //创建目录
-                pid =  saveIbum(pid,title,id);
-                for(int i=0;i<pictures.size();i++){
-                    try {
-                        String fileExt = pictures.get(i).substring(pictures.get(i).lastIndexOf(".")+1);
-                        String fileName = DateUtils.getNow("yyyyMMdd_HHmmss") + "_" //
-                                + new SecureRandom().nextInt(999999) + "." + fileExt;
-                        //创建上传图片目录
-                        FileUploadUtil.uploadImgLW(pictures.get(i).toString(),"/jflyfox/photo/image/" ,fileName);
-//                        if(i==pictures.size()-1){
-                            //保存图片
-                            //TbSite site = getBackSite();
-                            //UploadFile uploadImage = getBackSite(FileUploadUtil.getProjectPath()+"/u/py/" + title + String.valueOf(i+1) +".jpg", FileUploadUtils.getUploadTmpPath(site), FileUploadUtils.UPLOAD_MAX);
-                            saveImage(FileUploadUtil.getProjectPath()+"/jflyfox/photo/image/" + fileName,"jflyfox/photo/image/" + fileName,fileName,fileExt,pid);
-
-//                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            title += id.substring(id.length()-2,id.length());
+            // 如果之前已经录入该商品，后面的数据就不爬取了
+            if (remarkList.size() > 0) return true; // true: 之前已经录入过了
+            // 创建目录
+            pid =  saveIbum(pid,title,id);
+            for(int i=0;i<pictures.size();i++){
+                try {
+                    String fileExt = pictures.get(i).substring(pictures.get(i).lastIndexOf(".")+1);
+                    String fileName = DateUtils.getNow("yyyyMMdd_HHmmss") + "_" //
+                            + new SecureRandom().nextInt(999999) + "." + fileExt;
+                    //创建上传图片目录
+                    FileUploadUtil.download(pictures.get(i).toString(),"/jflyfox/photo/image/" ,fileName);
+                    //保存图片
+                    saveImage(FileUploadUtil.getProjectPath().replace("\\","/")+"jflyfox/photo/image/" + fileName,"jflyfox/photo/image/" + fileName,fileName,fileExt,pid,title);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-
-            // TODO: 将数据录入系统就好
-            return false; // true: 之前已经录入过了
+            return false;
         }
     };
-    public TbSite getBackSite() {
-        SysUser user = SysUser.dao.findFirstByWhere("where userid = ?",1);
-        if (user == null) {
-            return null;
-        }
-        TbSite site = new SiteService().getSite(user.getBackSiteId());
-        return site;
-    }
-    private boolean saveImage(String imgPath,String imageUrl,String title ,String  fileExt,String pid){
-        TbImage model = new TbImage();
 
-        model.put("album_id",pid);
-        model.put("album_name",title);
-        model.put("image_url",imageUrl);
-        model.put("linkurl",imgPath);
-//        model.put("image_net_url",imgNetUrl);
-        model.put("ext",fileExt);
-
-        Integer userid = 1;
-        String now = DateUtils.getNow(DateUtils.DEFAULT_REGEX_YYYY_MM_DD_HH_MIN_SS);
-        model.put("update_id", userid);
-        model.put("update_time", now);
-        // 新增
-        model.remove("id");
-        model.put("create_id", userid);
-        model.put("create_time", now);
-        model.save();
-
-        return false;
-    }
 
     // -----------------------------------------------------------------------------------------------------------
 
@@ -246,69 +193,55 @@ public class SpiderJob implements Runnable {
         }
         return m;
     }
+    //------------------------------------------------------------------------------------------------------------------
 
-   // @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        System.out.println("################任务执行#################");
-//        try {
-//            // 执行作业
-//            doSpiderJob(callable);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+
+    //保存图片到本地
+    private boolean saveImage(String imgPath,String imageUrl,String fileName ,String fileExt,String pid ,String albumTitle){
+        TbImage model = new TbImage();
+
+        model.setAlbumId(Integer.valueOf(pid));
+        model.setAlbumName(albumTitle);
+        model.setName(fileName);
+        model.setImageUrl(imageUrl);
+        model.setLinkurl(imgPath);
+        model.setExt(fileExt);
+//        model.setImageNetUrl(imageNetUrl)
+
+//        SysUser user = SysUser.dao.findFirstCache("user_job","getUser","select * from sys_user where username = 'admin' ");
+        Integer userid =1;
+        String now = DateUtils.getNow(DateUtils.DEFAULT_REGEX_YYYY_MM_DD_HH_MIN_SS);
+        // 新增
+        model.remove("id");
+        model.setCreateId(userid);
+        model.setCreateTime(now);
+        model.save();
+
+        return false;
     }
 
+    //创建相册
     private String saveIbum(String pid ,String title,String remark){
         TbImageAlbum model = new TbImageAlbum();
 
-            if (pid==null){
-                model.setParentId(0);
-            }else{
-                model.setParentId(Integer.valueOf(pid));
-            }
-            model.setName(title);
-            model.setSort(1);
+        if (pid==null){
+            model.setParentId(0);
+        }else{
+            model.setParentId(Integer.valueOf(pid));
+        }
+        model.setName(title);
+        model.setSort(1);
+        Integer userid = 1; // admin用户
+        String now = DateUtils.getNow(DateUtils.DEFAULT_REGEX_YYYY_MM_DD_HH_MIN_SS);
 
-            Integer userid = 1;// admin用户
-            String now = DateUtils.getNow(DateUtils.DEFAULT_REGEX_YYYY_MM_DD_HH_MIN_SS);
-            model.put("update_id", userid);
-            model.put("update_time", now);
-            model.remove("id");
-            model.put("create_id", userid);
-            model.put("create_time", now);
-            model.put("remark",remark);
-            model.put("name",title);
-            model.save();
-            pid = String.valueOf(model.get("id"));
+        model.remove("id");
+        model.setCreateId(userid);
+        model.setCreateTime(now);
+        model.setRemark(remark);
+        model.setName(title);
+        model.save();
+        pid = String.valueOf(model.get("id"));
 
-
-//        String[] ibums = title.split("/");
-//        Integer pid = null ;
-//        for(int i =0 ; i <ibums.length;i++){
-//            TbImageAlbum model = new TbImageAlbum();
-//
-//            if(i==0){
-//                model.put("remark",id);
-//                pid = 5;
-//            }
-//            model.setParentId(pid);
-//            model.setName(ibums[i]);
-//            model.setSort(1);
-//
-//            Integer userid = 1;// admin用户
-//            String now = DateUtils.getNow(DateUtils.DEFAULT_REGEX_YYYY_MM_DD_HH_MIN_SS);
-//            model.put("update_id", userid);
-//            model.put("update_time", now);
-////            if (pid != null && pid > 0) { // 更新
-////                model.update();
-////            } else { // 新增
-//                model.remove("id");
-//                model.put("create_id", userid);
-//                model.put("create_time", now);
-//                model.save();
-////            }
-//             pid = model.get("id");
-//        }
         return pid;
     }
 

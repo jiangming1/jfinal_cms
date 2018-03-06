@@ -2,6 +2,7 @@ package com.jflyfox.modules;
 
 import com.jfinal.aop.Before;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.ehcache.CacheKit;
 import com.jflyfox.component.base.BaseProjectController;
 import com.jflyfox.component.util.ImageCode;
 import com.jflyfox.component.util.JFlyFoxUtils;
@@ -22,8 +23,13 @@ import com.jflyfox.system.user.UserCache;
 import com.jflyfox.util.Config;
 import com.jflyfox.util.NumberUtils;
 import com.jflyfox.util.StrUtils;
+import com.jflyfox.util.task.job.SpiderJob;
+import com.jflyfox.util.task.job.UploadOssJob;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * CommonController
@@ -33,6 +39,10 @@ public class CommonController extends BaseProjectController {
 
 	public static final String loginPage = "/login.html";
 	public static final String firstPage = "/home";
+
+//	public void test() {
+//		//new SpiderJob().run();
+//	}
 
 	/**
 	 * 首页，菜单
@@ -84,7 +94,7 @@ public class CommonController extends BaseProjectController {
 		} else if (StrUtils.isNotEmpty(path)) {
 			renderAuto(path);
 		} else {
-			//renderAuto(Home.PATH + urlKey + ".html");
+//			renderAuto(Home.PATH + urlKey + ".html");
 
 
 			//跳转到自定义相册展示
@@ -103,7 +113,7 @@ public class CommonController extends BaseProjectController {
 			// 排序
 			String orderBy = getBaseForm().getOrderBy();
 			if (StrUtils.isEmpty(orderBy)) {
-				sql.append(" order by sort,id desc");
+				sql.append(" order by sort,id asc");
 			} else {
 				sql.append(" order by ").append(orderBy);
 			}
@@ -117,18 +127,14 @@ public class CommonController extends BaseProjectController {
 				paginator.setPageNo(pageNo);
 			}
 			Integer pageSize = getParaToInt("recordsperpage",18);
+
 			if (pageSize != null && pageSize > 0) {
 				paginator.setPageSize(pageSize);
 			}
 			Page<TbImageAlbum> page = TbImageAlbum.dao.paginate(paginator, sqlSelect, //
-					sql.toString().toString());
-
-			List<TbImageAlbum> albumsType = TbImageAlbum.dao.find("SELECT * FROM tb_image_album WHERE parent_id = 0 ;");
-
-
+					sql.toString());
 			setAttr("page", page);
 //			setAttr("attr", model);
-			setAttr("albumsType",albumsType);
 			renderAuto(Home.PATH + urlKey + ".html");
 		}
 
