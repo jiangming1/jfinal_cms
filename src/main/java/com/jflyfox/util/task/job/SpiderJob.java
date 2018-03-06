@@ -76,11 +76,6 @@ public class SpiderJob implements Runnable {
         }
     };
 
-    public static void main(String[] args) {
-        System.out.println();
-    }
-
-
     // -----------------------------------------------------------------------------------------------------------
 
     private static Map<String, String> categories = new HashMap<>();
