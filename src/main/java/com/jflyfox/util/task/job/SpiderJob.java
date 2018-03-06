@@ -92,7 +92,6 @@ public class SpiderJob implements Runnable {
             // 开始抓取数据
             for (int i = 1; i <= totalPage; i++) {
                 String dataJson = pageDate(categoryUrl, i);
-                System.out.println(i + " : " + dataJson);
                 // 从json提出去有用的数据
                 boolean isBreak = fetchUsableData(categoryName, dataJson, callable);
                 System.out.println("第"+i+"页数据获取完毕！");
@@ -125,8 +124,6 @@ public class SpiderJob implements Runnable {
         Connection conn = Jsoup.connect(ssoUrl).cookies(cookies).timeout(10*1000);
         Connection.Response resp = conn.method(Connection.Method.GET).execute();
         cookies.putAll(encodeAll(resp.cookies()));
-        String body = resp.body();
-        System.out.println(body);
     }
 
     // 蕾丝列表页面请求
