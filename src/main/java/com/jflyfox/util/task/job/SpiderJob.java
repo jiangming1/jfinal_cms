@@ -47,7 +47,7 @@ public class SpiderJob implements Runnable {
 
             List remarkList = TbImageAlbum.dao.find("SELECT * FROM tb_image_album WHERE remark = ? " ,id);
             title = title.replaceAll(" ","_");
-            title += id.substring(id.length()-2,id.length());
+            title += id;
             // 如果之前已经录入该商品，后面的数据就不爬取了
             if (remarkList.size() > 0) return true; // true: 之前已经录入过了
             // 创建目录
