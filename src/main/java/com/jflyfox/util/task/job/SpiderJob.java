@@ -52,6 +52,7 @@ public class SpiderJob implements Runnable {
             if (remarkList.size() > 0) return true; // true: 之前已经录入过了
             // 创建目录
             TbImageAlbum album = saveIbum(pid, title, id);
+            String sonId = album.getId().toString();
             for (int i=0; i<pictures.size(); i++){
                 try {
                     String fileExt = pictures.get(i).substring(pictures.get(i).lastIndexOf(".")+1);
@@ -61,7 +62,7 @@ public class SpiderJob implements Runnable {
                     File file = new File(fileDir, fileName);
                     HttpUtil.downloadFile(pictures.get(i), file);
                     //保存图片
-                    saveImage(file.getAbsolutePath(),"/jflyfox/photo/image/" + fileName, fileName, fileExt, pid, title);
+                    saveImage(file.getAbsolutePath(),"/jflyfox/photo/image/" + fileName, fileName, fileExt, sonId, title);
                 } catch (Exception e) {
                     e.printStackTrace();
                     album.setErrors(e.getMessage());
