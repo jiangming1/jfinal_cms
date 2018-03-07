@@ -3,22 +3,15 @@ package com.jflyfox.util.task.job;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jfinal.kit.FileKit;
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jflyfox.modules.admin.image.model.TbImage;
 import com.jflyfox.modules.admin.image.model.TbImageAlbum;
-import com.jflyfox.modules.admin.site.SiteService;
-import com.jflyfox.modules.admin.site.TbSite;
-import com.jflyfox.system.user.SysUser;
 import com.jflyfox.util.DateUtils;
-import com.jflyfox.util.FileUploadUtil;
 import com.xiaoleilu.hutool.http.HttpUtil;
-import com.xiaoleilu.hutool.util.FileUtil;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import sun.nio.ch.FileKey;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +41,8 @@ public class SpiderJob implements Runnable {
                 Record p = Db.findFirst("SELECT ID FROM tb_image_album WHERE name = '" + category + "' ");
                 pid = String.valueOf(p.get("ID"));
             }catch (Exception e) {
-                pid =  saveIbum(null,category,"");
+                TbImageAlbum rootAlbum = saveIbum(null, category, "");
+                pid = rootAlbum.getId().toString();
             }
 
             List remarkList = TbImageAlbum.dao.find("SELECT * FROM tb_image_album WHERE remark = ? " ,id);
@@ -57,8 +51,8 @@ public class SpiderJob implements Runnable {
             // 如果之前已经录入该商品，后面的数据就不爬取了
             if (remarkList.size() > 0) return true; // true: 之前已经录入过了
             // 创建目录
-            pid =  saveIbum(pid,title,id);
-            for(int i=0;i<pictures.size();i++){
+            TbImageAlbum album = saveIbum(pid, title, id);
+            for (int i=0; i<pictures.size(); i++){
                 try {
                     String fileExt = pictures.get(i).substring(pictures.get(i).lastIndexOf(".")+1);
                     String fileName = DateUtils.getNow("yyyyMMdd_HHmmss") + "_" //
@@ -70,6 +64,8 @@ public class SpiderJob implements Runnable {
                     saveImage(file.getAbsolutePath(),"/jflyfox/photo/image/" + fileName, fileName, fileExt, pid, title);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    album.setErrors(e.getMessage());
+                    album.update();
                 }
             }
             return false;
@@ -225,7 +221,7 @@ public class SpiderJob implements Runnable {
     }
 
     //创建相册
-    private String saveIbum(String pid ,String title,String remark){
+    private TbImageAlbum saveIbum(String pid , String title, String remark){
         TbImageAlbum model = new TbImageAlbum();
 
         if (pid==null){
@@ -244,9 +240,7 @@ public class SpiderJob implements Runnable {
         model.setRemark(remark);
         model.setName(title);
         model.save();
-        pid = String.valueOf(model.get("id"));
-
-        return pid;
+        return model;
     }
 
     @Override

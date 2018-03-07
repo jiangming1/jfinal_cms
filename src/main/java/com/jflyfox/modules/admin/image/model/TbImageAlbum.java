@@ -20,6 +20,7 @@ public class TbImageAlbum extends BaseProjectModel<TbImageAlbum> {
 	private String UPDATE_ID = "update_id"; // 更新人
 	private String CREATE_TIME = "create_time"; // 创建时间
 	private String CREATE_ID = "create_id"; // 创建者
+	private String ERRORS = "errors"; // 爬虫报错信息
 
 	public TbImageAlbum setId(java.lang.Integer value) {
 		set(ID, value);
@@ -111,6 +112,15 @@ public class TbImageAlbum extends BaseProjectModel<TbImageAlbum> {
 		return get(CREATE_ID);
 	}
 
+	public TbImageAlbum setErrors(java.lang.String value) {
+		set(ERRORS, value);
+		return this;
+	}
+
+	public java.lang.String getErrors() {
+		return get(ERRORS);
+	}
+
 	@Override
 	public String toString() {
 		String log = "";
@@ -124,6 +134,7 @@ public class TbImageAlbum extends BaseProjectModel<TbImageAlbum> {
 		log += "[updateId:" + getUpdateId() + "]";
 		log += "[createTime:" + getCreateTime() + "]";
 		log += "[createId:" + getCreateId() + "]";
+		log += "[errors:" + getErrors() + "]";
 		return log;
 	}
 }
