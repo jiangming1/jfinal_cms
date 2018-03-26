@@ -34,7 +34,7 @@ public class FrontImageService extends BaseService {
 	public List<TbImageAlbum> getAlbumList() {
 		String key = "albumList";
 		String sql = "select * from tb_image_album t where  status = 1 order by sort,id desc";
-		return TbImageAlbum.dao.findCache(cacheName, key, sql);
+		return TbImageAlbum.dao.find( key, sql);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class FrontImageService extends BaseService {
 	public TbImageAlbum getAlbum(Integer albumId) {
 		String key = "album_" + albumId;
 		String sql = "select * from tb_image_album t where id = ? ";
-		return TbImageAlbum.dao.findFirstCache(cacheName, key, sql, albumId);
+		return TbImageAlbum.dao.findFirst(sql, albumId);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class FrontImageService extends BaseService {
 	 */
 	public Page<TbImage> getImage(Paginator paginator) {
 		String key = ("article_" + paginator.getPageNo() + "_" + paginator.getPageSize());
-		Page<TbImage> images = TbImage.dao.paginateCache(cacheName, key, paginator, "select * " //
+		Page<TbImage> images = TbImage.dao.paginate( paginator, "select * " //
 				, " from tb_image " //
 						+ " where status = 1 " // 查询状态为显示
 						+ " order by sort,create_time desc");
@@ -89,7 +89,7 @@ public class FrontImageService extends BaseService {
 	 */
 	public Page<TbImage> getImage(Paginator paginator, int albumId) {
 		String key = ("article_" + albumId + "_" + paginator.getPageNo() + "_" + paginator.getPageSize());
-		Page<TbImage> images = TbImage.dao.paginateCache(cacheName, key, paginator, "select * " //
+		Page<TbImage> images = TbImage.dao.paginate(paginator, "select * " //
 				, " from tb_image " //
 						+ " where status = 1 " // 查询状态为显示
 						+ " and album_id =  ? " //
@@ -108,7 +108,7 @@ public class FrontImageService extends BaseService {
 	public TbImage getImage(Integer imageId) {
 		String key = "image_" + imageId;
 		String sql = "select * from tb_image t where id = ? ";
-		return TbImage.dao.findFirstCache(cacheName, key, sql, imageId);
+		return TbImage.dao.findFirst(sql, imageId);
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class FrontImageService extends BaseService {
 	 */
 	public Page<TbImage> getRecommendImages(Paginator paginator) {
 		String key = ("recommendImage_" + paginator.getPageNo() + "_" + paginator.getPageSize());
-		Page<TbImage> articles = TbImage.dao.paginateCache(cacheName, key, paginator, "select * " //
+		Page<TbImage> articles = TbImage.dao.paginate(paginator, "select * " //
 				, " from tb_image  where status = 1 " //
 						+ " and is_recommend = 1 " // 推荐文章
 						+ " order by sort,create_time desc");

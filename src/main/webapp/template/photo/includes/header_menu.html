@@ -1,60 +1,42 @@
-<style>
-.q-taglist .q-tagitem {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 14px;
-  line-height: 1.42857143;
-  color: #333;
-}
-
-.q-taglist .a-tagitem-active {
-    color: #fff;
-    background-color: #D8D8D8;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px
-}
-</style>
-
-<% var albums = tempImage.albums(); %>
 
 <nav class="navbar navbar-default navbar-fixed-top">
-  <div class="text-left" style="margin-top: 15px;margin-left: 10px;">
-					<%  
-						if(albums != null && albums.~size > 0) {
-					%>
-						<ul class="q-taglist clearfix">
-							<li title="标签"><span class="q-icon"></span></li>
-							<li class="q-tagitem">
-							<a class="a-tagitem" href="${BASE_PATH }" >全部</a>
-							</li>
-						<%
-							for(item in albums){ 
-						%>
-							<li class="q-tagitem ${album_selected!0==item.id?'a-tagitem-active':''}">
-							<a class="a-tagitem" href="${BASE_PATH }album/image/${tempImage.randomAlbumId()}${item.id}.html" >${item.name}</a>
-							</li>
-						<% 
-							}
-						%>
-						</ul>
-					<%
-					} 
-					%>
-					</div>
-					
-					<div class="text-right">
-					</div>
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+			<ul class="nav navbar-nav navbar-right">
+				<% if(isEmpty(session.session_user)){ %>
+				<li><a href="${BASE_PATH }oauth2/login.html?loin_type=baidu" class="navbar-brand" ><img alt="Brand" src="${BASE_PATH }static/oauth2/baidu_login.png"></a></li>
+				<li><a href="${BASE_PATH }oauth2/login.html?loin_type=qq" class="navbar-brand" ><img alt="Brand" src="${BASE_PATH }static/oauth2/qq_login.png"></a></li>
+				<li><a href="${BASE_PATH }front/login.html">登录</a></li>
+				<li class="${'regist'==folders_selected!''?'active':''}"><a href="${BASE_PATH }front/regist.html" >注册</a></li>
+				<% } else { %>
+				<li class="${'person'==folders_selected!''?'active':''}"><a href="${BASE_PATH }front/person/profile.html">个人设置</a></li>
+				<li class="divider"></li>
+				<li><a href="${BASE_PATH }front/logout">退出</a></li>
+
+				<% } %>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</div><!-- /.container-fluid -->
 </nav>
 
 <div class="container">
 	<!-- 固定导航 -->
 	<div class="row" style="height:60px;">
-	  <div class="col-md-12">
+		<div class="col-md-12">
 			&nbsp;
-	  </div>
+		</div>
 	</div>
 </div>
-
-
-
 	

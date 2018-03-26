@@ -1,5 +1,5 @@
 # cron 表达式由五部分组成：分 时 天 月 周
-# 分 ：从 0 到 59
+# 分 ：从 0 到 59 hQgWMO
 # 时 ：从 0 到 23
 # 天 ：从 1 到 31，字母 L 可以表示月的最后一天
 # 月 ：从 1 到 12，可以别名：jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov" and "dec"
@@ -14,12 +14,12 @@
 
 cron4j=test,test1
 
-test.cron= 16 18 * * *
+test.cron= 38 10 * * *
 test.class=com.jflyfox.util.task.job.SpiderJob
 test.daemon=true
 test.enable=true
 
-test1.cron= * * * * *
+test1.cron= 11 7 * * *
 test1.class=com.jflyfox.util.task.job.UploadOssJob
 test1.daemon=false
 test1.enable=true

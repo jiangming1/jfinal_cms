@@ -138,23 +138,6 @@
 			<version>2.0.6</version>
 		</dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>jknife</groupId>-->
-			<!--<artifactId>jknife-ezmvc</artifactId>-->
-			<!--<version>${jknife.ezmvc_version}</version>-->
-		<!--</dependency>-->
-
-		<!--<dependency>-->
-			<!--<groupId>org.springframework</groupId>-->
-			<!--<artifactId>spring-beans</artifactId>-->
-			<!--<version>${spring.version}</version>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>org.springframework</groupId>-->
-			<!--<artifactId>spring-context</artifactId>-->
-			<!--<version>${spring.version}</version>-->
-		<!--</dependency>-->
-
 		<!-- 爬虫需要的jar -->
 		<dependency>
 			<groupId>org.jsoup</groupId>

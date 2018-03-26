@@ -244,6 +244,7 @@ public class BaseConfig extends JFinalConfig {
 				if ("MemorySerializeCache".equals(cacheName)) {
 					return new MemorySerializeCache();
 				} else if ("MemoryCache".equals(cacheName)) {
+
 					return new MemoryCache();
 				}  else if ("RedisCache".equals(cacheName)) {
 					return new RedisCache();
