@@ -194,7 +194,8 @@
 		<!-- 打包目录 -->
 		<directory>target</directory>
 		<!-- 打包名称 -->
-		<finalName>${project.artifactId}</finalName>
+		<!--<finalName>${project.artifactId}</finalName>-->
+		<finalName>jfq2_cms</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
