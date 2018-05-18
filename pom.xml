@@ -97,34 +97,34 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>de.ruedigermoeller</groupId>-->
-			<!--<artifactId>fst</artifactId>-->
-			<!--<version>1.58</version>-->
-			<!--<exclusions>-->
-				<!--<exclusion>-->
-					<!--<groupId>org.javassist</groupId>-->
-					<!--<artifactId>javassist</artifactId>-->
-				<!--</exclusion>-->
-			<!--</exclusions>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>de.ruedigermoeller</groupId>
+			<artifactId>fst</artifactId>
+			<version>1.58</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-runtime</artifactId>
 			<version>4.2</version>
 		</dependency>
 		
-		<!--<dependency>-->
-			<!--<groupId>dom4j</groupId>-->
-			<!--<artifactId>dom4j</artifactId>-->
-			<!--<version>1.6.1</version>-->
-			<!--<exclusions>-->
-				<!--<exclusion>-->
-					<!--<groupId>xml-apis</groupId>-->
-					<!--<artifactId>xml-apis</artifactId>-->
-				<!--</exclusion>-->
-			<!--</exclusions>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<!-- aliyun oss -->
 		<dependency>
@@ -183,13 +183,13 @@
 	</dependencies>
 
 	 <!--使用aliyun maven-->
-	<!--<repositories>-->
-	  <!--<repository>-->
-	    <!--<id>aliyun</id>-->
-	    <!--<name>aliyun</name>-->
-	    <!--<url>http://maven.aliyun.com/nexus/content/groups/public</url>-->
-	  <!--</repository>-->
-	<!--</repositories>-->
+	<repositories>
+	  <repository>
+	    <id>aliyun</id>
+	    <name>aliyun</name>
+	    <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+	  </repository>
+	</repositories>
 
 	<build>
 		<!-- 打包目录 -->
