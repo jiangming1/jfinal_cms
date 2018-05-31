@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jboss-web>
+
+    <context-root>/jfq2_cms</context-root>
+
+</jboss-web>

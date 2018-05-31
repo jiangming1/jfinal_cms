@@ -162,8 +162,8 @@ public class BaseConfig extends JFinalConfig {
 		}
 		new AutoBindModels(arp);
 
-		Cron4jPlugin cp = new Cron4jPlugin("task.txt");//直接配置cron4j  抓取图片
-		me.add(cp);
+//		Cron4jPlugin cp = new Cron4jPlugin("task.txt");//直接配置cron4j  抓取图片
+//		me.add(cp);
 	}
 	
 	@Override
@@ -214,6 +214,7 @@ public class BaseConfig extends JFinalConfig {
 	public void afterJFinalStart() {
 		super.afterJFinalStart();
 
+//		JFinal.me().getServletContext().setAttribute("cxt","jfq2_cms");
 		JFlyFoxCache.init();
 		System.out.println("##################################");
 		System.out.println("############系统启动完成##########");

@@ -1,5 +1,5 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 
 <% 
-response.sendRedirect("login");
+response.sendRedirect("/jfq2_cms/login");
 %>
