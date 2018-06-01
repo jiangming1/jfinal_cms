@@ -1,0 +1,13 @@
+<!--<!DOCTYPE jboss-web PUBLIC "-//JBoss//DTD Web Application 5.0//EN"-->
+        <!--"http://www.jboss.org/j2ee/dtd/jboss-web_5_0.dtd">-->
+<!--<jboss-web>-->
+    <!--<class-loading java2ClassLoadingCompliance='true'>-->
+        <!--<loader-repository>-->
+            <!--com.example:archive=jfq2_cms.war-->
+            <!--<loader-repository-config>-->
+                <!--java2ParentDelegaton=true-->
+            <!--</loader-repository-config>-->
+        <!--</loader-repository>-->
+    <!--</class-loading>-->
+    <!--<context-root>/jfq2_cms</context-root>-->
+<!--</jboss-web>-->
