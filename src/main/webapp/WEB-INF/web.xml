@@ -33,9 +33,17 @@
 		<location>/pages/error/500.html</location>
 	</error-page>
 
-	<context-param>
-		<param-name>webAppRootKey</param-name>
-		<param-value>jfq2_cms</param-value>
-	</context-param>
+	<!--<context-param>-->
+		<!--<param-name>webAppRootKey</param-name>-->
+		<!--<param-value>jfq2_cms</param-value>-->
+	<!--</context-param>-->
+
+	<!--jboss-->
+	<!--<context-param>-->
+		<!--<param-name>contextClass</param-name>-->
+		<!--<param-value>-->
+			<!--org.jboss.spring.vfs.context.VFSXmlWebApplicationContext-->
+		<!--</param-value>-->
+	<!--</context-param>-->
 
 </web-app>
