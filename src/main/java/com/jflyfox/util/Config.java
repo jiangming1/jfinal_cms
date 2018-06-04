@@ -16,7 +16,6 @@
  */
 
 package com.jflyfox.util;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 public class Config {
-	private final static URL classPathUrl = Config.class.getResource("/");
+	private final static URL classPathUrl = Thread.currentThread().getContextClassLoader().getResource("");//Config.class.getResource("/");
 	private final static String classPath = new File(classPathUrl.getFile()).getPath();
 	private static String configPath = "/conf/";
 	private static Map<String, String> configMap = new HashMap<String, String>();
@@ -100,6 +99,11 @@ public class Config {
 	}
 	
 	private static void setConfigMap() {
+//		URL a = FilePath.class.getResource("");
+//		URL b = FilePath.class.getResource("/");
+//		URL c = Thread.currentThread().getContextClassLoader().getResource("");
+//		URL d = FilePath.class.getClassLoader().getResource("");
+//		URL e = ClassLoader.getSystemResource("");
 		String filePath = classPath + configPath;
 		filePath = PathUtils.rebuild(filePath);
 		List<String> list = findFiles(filePath);
@@ -128,7 +132,7 @@ public class Config {
 	 * 
 	 * 2014年7月5日 上午12:23:14 flyfox 330627517@qq.com
 	 * 
-	 * @param file
+	 * @param fileName
 	 * @return
 	 */
 	private static Properties getProperties(String fileName) {
