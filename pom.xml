@@ -5,7 +5,7 @@
 	<artifactId>jfq2_cms</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0</version>
-	<name>qqq Maven Webapp</name>
+	<!--<name>qqq Maven Webapp</name>-->
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -196,47 +196,47 @@
 	</dependencies>
 
 	 <!--使用aliyun maven-->
-	<!--<repositories>-->
-	  <!--<repository>-->
-	    <!--<id>aliyun</id>-->
-	    <!--<name>aliyun</name>-->
-	    <!--<url>http://maven.aliyun.com/nexus/content/groups/public</url>-->
-		<!--<releases>-->
-		  <!--<enabled>true</enabled>-->
-		<!--</releases>-->
-		<!--<snapshots>-->
-		  <!--<enabled>false</enabled>-->
-		<!--</snapshots>-->
-	  <!--</repository>-->
-	<!--</repositories>-->
 	<repositories>
-		<!-- 配置nexus远程仓库 -->
-		<repository>
-			<id>nexus</id>
-			<name>Nexus Snapshot Repository</name>
-			<url>http://120.26.200.173:8081/nexus/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+	  <repository>
+	    <id>aliyun</id>
+	    <name>aliyun</name>
+	    <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+		<releases>
+		  <enabled>true</enabled>
+		</releases>
+		<snapshots>
+		  <enabled>false</enabled>
+		</snapshots>
+	  </repository>
 	</repositories>
-	<!-- 配置从哪个仓库中下载构件，即jar包 -->
-	<pluginRepositories>
-		<pluginRepository>
-			<id>nexus</id>
-			<name>Nexus Snapshot Repository</name>
-			<url>http://120.26.200.173:8081/nexus/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
+	<!--<repositories>-->
+		<!--&lt;!&ndash; 配置nexus远程仓库 &ndash;&gt;-->
+		<!--<repository>-->
+			<!--<id>nexus</id>-->
+			<!--<name>Nexus Snapshot Repository</name>-->
+			<!--<url>http://120.26.200.173:8081/nexus/content/groups/public/</url>-->
+			<!--<releases>-->
+				<!--<enabled>true</enabled>-->
+			<!--</releases>-->
+			<!--<snapshots>-->
+				<!--<enabled>false</enabled>-->
+			<!--</snapshots>-->
+		<!--</repository>-->
+	<!--</repositories>-->
+	<!--&lt;!&ndash; 配置从哪个仓库中下载构件，即jar包 &ndash;&gt;-->
+	<!--<pluginRepositories>-->
+		<!--<pluginRepository>-->
+			<!--<id>nexus</id>-->
+			<!--<name>Nexus Snapshot Repository</name>-->
+			<!--<url>http://120.26.200.173:8081/nexus/content/groups/public/</url>-->
+			<!--<releases>-->
+				<!--<enabled>true</enabled>-->
+			<!--</releases>-->
+			<!--<snapshots>-->
+				<!--<enabled>false</enabled>-->
+			<!--</snapshots>-->
+		<!--</pluginRepository>-->
+	<!--</pluginRepositories>-->
 
 	<build>
 		<!-- 打包目录 -->
