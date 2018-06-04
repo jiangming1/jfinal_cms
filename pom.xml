@@ -5,6 +5,8 @@
 	<artifactId>jfq2_cms</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0</version>
+	<name>qqq Maven Webapp</name>
+	<url>http://maven.apache.org</url>
 
 	<properties>
 		<!-- 文件拷贝时的编码 -->
