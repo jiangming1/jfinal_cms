@@ -29,7 +29,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 public class Config {
-	private final static URL classPathUrl = Thread.currentThread().getContextClassLoader().getResource("");//Config.class.getResource("/");
+	private final static URL classPathUrl = Config.class.getResource("/");//Thread.currentThread().getContextClassLoader().getResource("");//
+//	private final static String classPath = PathKit.getWebRootPath()+"/WEB-INF/classes/";
 	private final static String classPath = new File(classPathUrl.getFile()).getPath();
 	private static String configPath = "/conf/";
 	private static Map<String, String> configMap = new HashMap<String, String>();
@@ -99,11 +100,7 @@ public class Config {
 	}
 	
 	private static void setConfigMap() {
-//		URL a = FilePath.class.getResource("");
-//		URL b = FilePath.class.getResource("/");
-//		URL c = Thread.currentThread().getContextClassLoader().getResource("");
-//		URL d = FilePath.class.getClassLoader().getResource("");
-//		URL e = ClassLoader.getSystemResource("");
+		String a = System.getProperty("jfq2_cms.root");
 		String filePath = classPath + configPath;
 		filePath = PathUtils.rebuild(filePath);
 		List<String> list = findFiles(filePath);
